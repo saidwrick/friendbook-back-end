@@ -55,16 +55,19 @@ const UserSchema = new Schema(
   }
 );
 
-UserSchema
-.virtual('birthdayFormatted')
-.get(function () {
-    return this.birthday.toLocaleDateString("en-US")
+UserSchema.set('toObject', { virtuals: true })
+UserSchema.set('toJSON', { virtuals: true })
+
+UserSchema.virtual('birthdayFormatted').get(function () {
+    const birthday = new Date(this.birthday).toLocaleDateString("en-us", {year: "numeric", month: "long", day: "numeric"});
+    return birthday
 });
 
 UserSchema
 .virtual('joinDateFormatted')
 .get(function () {
-    return this.joinDate.toLocaleDateString("en-US")
+    const joinDate = new Date (this.joinDate).toLocaleDateString("en-us", {year: "numeric", month: "long", day: "numeric"});
+    return joinDate
 });
 
 module.exports = mongoose.model('User', UserSchema);

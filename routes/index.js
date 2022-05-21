@@ -1,11 +1,7 @@
-var express = require('express');
-var router = express.Router();
-
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+const postController = require('../controllers/postController');
 /* 
 get logged in user info (details/ friends)
 get posts of friends + user for logged in user
@@ -38,28 +34,30 @@ get other user posts for profile info
 
 // /signup sign up
 // /login login
-router.post('/signup')
-router.post('/login')
+router.post('/signup', userController.userSignUpPost);
+router.post('/login', userController.userLoginPost);
 
 // users get all users
-// users/id (for other)
-// users/id (for logged in)
-// users/id update(for logged in)
 router.get('/users')
-router.get('/users/:id')
+
+// users/id (for other) get info/ nested/posts/comments
+// users/id (for logged in) login(don't get posts) vs load self page(get posts)
+// users/id update(for logged in)
+router.get('/users/:id', userController.userProfileGet);
+router.put('/users/:id')
 
 // users/id/friends friend actions put in req.body *accepts/ requested
-router.get('/users/:id/friend-actions')
+router.put('/users/:id/friend-actions')
 
 // users/id/notifications get/update notifications
 router.get('/users/:id/notifications')
 router.put('/users/:id/notifications')
 
-// users/id/posts get posts for 1 user
-router.get('/users/:id/posts')
-
 // posts/ get all posts (filter by ID)
-router.get('/posts')
+router.get('/posts', postController.allFriendPostsGet)
+
+//create new post
+router.post('/posts', postController.newPostPost);
 
 // posts/id get specific post (for notification)
 // posts/id delete post
@@ -68,7 +66,6 @@ router.delete('/posts:id')
 
 // posts/id add/remove like *likes
 router.put('/posts/:id')
-
 
 // comments/id add/remove like
 router.put('/comments/:id')

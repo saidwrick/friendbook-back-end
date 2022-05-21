@@ -4,17 +4,17 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const jwt = require('jsonwebtoken');
 
-const passport = require("./passport/settings");
+const passport = require("./passport/config");
 
 const mongoose = require("mongoose");
-const mongoDb = "";
+const mongoDb = "mongodb+srv://user:password001@friendbook.pxhzi.mongodb.net/friendbook?retryWrites=true&w=majority";
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -28,8 +28,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// pass every req except for /login and /signup through Passport token authenticator
+app.use(function (req, res, next) {
+    if (req.url == "/login" || req.url == "/signup"){
+        return next();
+    }
+    else {
+        passport.authenticate("jwt", {session: false}, function(err, user, info) {
+            if (err || !user) {
+                return res.status(401).json({
+                    message: err
+                })
+            }
+            else{
+                req.userId = user._id.toString();
+                return next();
+            }
+        })(req, res, next);
+    }
+})
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -45,6 +64,8 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.json(err.message);
+
 });
+
 
 module.exports = app;
