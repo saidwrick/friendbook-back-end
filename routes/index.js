@@ -38,7 +38,7 @@ router.post('/signup', userController.userSignUpPost);
 router.post('/login', userController.userLoginPost);
 
 // users get all users
-router.get('/users')
+router.get('/users', userController.userAllProfilesGet);
 
 // users/id (for other) get info/ nested/posts/comments
 // users/id (for logged in) login(don't get posts) vs load self page(get posts)
@@ -47,22 +47,22 @@ router.get('/users/:id', userController.userProfileGet);
 router.put('/users/:id')
 
 // users/id/friends friend actions put in req.body *accepts/ requested
-router.put('/users/:id/friend-actions')
+router.put('/users/:id/friend-actions', userController.userFriendActionsPut);
 
 // users/id/notifications get/update notifications
 router.get('/users/:id/notifications')
 router.put('/users/:id/notifications')
 
 // posts/ get all posts (filter by ID)
-router.get('/posts', postController.allFriendPostsGet)
+router.get('/users/:id/posts', postController.userPostsGet)
 
 //create new post
-router.post('/posts', postController.newPostPost);
+router.post('/users/:id/posts', postController.newPostPost);
 
 // posts/id get specific post (for notification)
 // posts/id delete post
 router.get('/posts/:id')
-router.delete('/posts:id')
+router.delete('/posts/:id')
 
 // posts/id add/remove like *likes
 router.put('/posts/:id')
