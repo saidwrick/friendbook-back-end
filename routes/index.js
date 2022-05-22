@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const postController = require('../controllers/postController');
+const commentController = require ('../controllers/commentController');
 /* 
 get logged in user info (details/ friends)
 get posts of friends + user for logged in user
@@ -65,13 +66,21 @@ router.get('/posts/:id')
 router.delete('/posts/:id')
 
 // posts/id add/remove like *likes
-router.put('/posts/:id')
+router.put('/posts/:id', postController.postLikePut)
+
+//get post comments
+router.get('/posts/:id/comments', commentController.commentsGet)
+
+// add comment to post
+router.post('/posts/:id/comments', commentController.commentPost)
 
 // comments/id add/remove like
-router.put('/comments/:id')
+router.put('/comments/:id', commentController.commentLikePut)
 
 // comments/id delete 
 router.delete('/comments/:id')
+
+
 
 
 

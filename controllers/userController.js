@@ -69,6 +69,9 @@ exports.userProfileGet = function (req, res, next) {
             if (err) {
                 return next(err); 
             }
+            if (!profile){
+                res.status(504).json("User not found")
+            }
             else {
                 res.status(200).json(profile);
             }
@@ -79,6 +82,9 @@ exports.userProfileGet = function (req, res, next) {
         .exec(function (err, profile) {
             if (err) {
                 return next(err); 
+            }
+            if (!profile){
+                res.status(501).json("User not found")
             }
             else {
                 res.status(200).json(profile);
@@ -95,6 +101,9 @@ exports.userAllProfilesGet = function (req, res, next) {
         if (err) {
             return next(err);
         }
+        if (!profiles){
+            res.status(504).json("Users not found")
+        }
         else {
             res.status(200).json(profiles)
         }
@@ -103,108 +112,135 @@ exports.userAllProfilesGet = function (req, res, next) {
 
 exports.userFriendActionsPut = function (req, res, next) {
     if (req.body.type == "accept"){
-        User.findOneAndUpdate({_id : req.params.id}, {
-            $addToSet: {"friends" : req.userId},
-            $pull: {"sentRequestFriends" : req.userId},
-        }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    User.findOneAndUpdate({_id : req.userId}, {
-                        $addToSet: {"friends" : req.params.id},
-                        $pull: {"recievedRequestFriends" : req.params.id},
-                }, function (err, result){
+        User.findOneAndUpdate({_id : req.params.id},
+        {$addToSet: {"friends" : req.userId},
+            $pull: {"sentRequestFriends" : req.userId}}, 
+        function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (!result){
+                res.status(504).json("User not found")
+            }
+            else {
+                User.findOneAndUpdate({_id : req.userId}, 
+                    {$addToSet: {"friends" : req.params.id},
+                        $pull: {"recievedRequestFriends" : req.params.id}}, 
+                    function (err, result){
                         if (err) {
                             return next(err);
+                        }
+                        if (!result){
+                            res.status(504).json("User not found")
                         }
                         else {
                             return res.status(200).json("success");
                         }
-                    });
-                }
+                    }
+                );
             }
-        );
+        });
     }
     else if (req.body.type == "deny"){
-        User.findOneAndUpdate({_id : req.params.id}, {
-            $pull: {"sentRequestFriends" : req.userId},
-        }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    User.findOneAndUpdate({_id : req.userId}, {
-                        $pull: {"recievedRequestFriends" : req.params.id},
-                }, function (err, result){
-                        if (err) {
-                            return next(err);
-                        }
-                        else {
-                            return res.status(200).json("success");
-                        }
-                    });
-                }
+        User.findOneAndUpdate({_id : req.params.id},
+        {$pull: {"sentRequestFriends" : req.userId}}, 
+        function (err, result) {
+            if (err) {
+                return next(err);
             }
-        );
+            if (!result){
+                res.status(504).json("User not found")
+            }
+            else {
+                User.findOneAndUpdate({_id : req.userId},
+                {$pull: {"recievedRequestFriends" : req.params.id}}, 
+                function (err, result){
+                    if (err) {
+                        return next(err);
+                    }
+                    if (!result){
+                        res.status(504).json("User not found")
+                    }
+                    else {
+                        return res.status(200).json("success");
+                    }
+                });
+            }
+        });
     }
     else if (req.body.type == "request"){
-        User.findOneAndUpdate({_id : req.params.id}, {
-            $addToSet: {"recievedRequestFriends" : req.userId},
-        }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    User.findOneAndUpdate({_id : req.userId}, {
-                        $addToSet: {"sentRequestFriends" : req.params.id},
-                }, function (err, result){
-                        if (err) {
-                            return next(err);
-                        }
-                        else {
-                            return res.status(200).json("success");
-                        }
-                    });
-                }
+        User.findOneAndUpdate({_id : req.params.id}, 
+        {$addToSet: {"recievedRequestFriends" : req.userId}}, 
+        function (err, result) {
+            if (err) {
+                return next(err);
             }
-        );
+            if (!result){
+                res.status(504).json("User not found")
+            }
+            else {
+                User.findOneAndUpdate({_id : req.userId}, 
+                {$addToSet: {"sentRequestFriends" : req.params.id}}, 
+                function (err, result){
+                    if (err) {
+                        return next(err);
+                    }
+                    if (!result){
+                        res.status(504).json("User not found")
+                    }
+                    else {
+                        return res.status(200).json("success");
+                    }
+                });
+            }
+        });
     }
     else if (req.body.type == "cancel"){
-        User.findOneAndUpdate({_id : req.params.id}, {
-            $pull: {"recievedRequestFriends" : req.userId},
-        }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    User.findOneAndUpdate({_id : req.userId}, {
-                        $pull: {"sentRequestFriends" : req.params.id},
-                }, function (err, result){
-                        if (err) {
-                            return next(err);
-                        }
-                        else {
-                            return res.status(200).json("success");
-                        }
-                    });
-                }
+        User.findOneAndUpdate({_id : req.params.id}, 
+        {$pull: {"recievedRequestFriends" : req.userId}}, 
+        function (err, result) {
+            if (err) {
+                return next(err);
             }
-        );
+            if (!result){
+                res.status(504).json("User not found")
+            }
+            else {
+                User.findOneAndUpdate({_id : req.userId}, 
+                {$pull: {"sentRequestFriends" : req.params.id}}, 
+                function (err, result){
+                    if (err) {
+                        return next(err);
+                    }
+                    if (!result){
+                        res.status(504).json("User not found")
+                    }
+                    else {
+                        return res.status(200).json("success");
+                    }
+                });
+            }
+        });
     }
     else if (req.body.type == "delete"){
-        User.findOneAndUpdate({_id : req.params.id}, {
-            $pull: {"friends" : req.userId},
-        }, function (err, result) {
+        User.findOneAndUpdate({_id : req.params.id}, 
+            {$pull: {"friends" : req.userId}}, 
+            function (err, result) {
                 if (err) {
                     return next(err);
                 }
+                if (!result){
+                    res.status(504).json("User not found")
+                }
                 else {
-                    User.findOneAndUpdate({_id : req.userId}, {
-                        $pull: {"friends" : req.params.id},
-                }, function (err, result){
+                    User.findOneAndUpdate({_id : req.userId}, 
+                    {$pull: {"friends" : req.params.id}}, 
+                    function (err, result){
                         if (err) {
                             return next(err);
+                        }
+                        if (!result){
+                            res.status(504).json("User not found")
                         }
                         else {
                             return res.status(200).json(result);
