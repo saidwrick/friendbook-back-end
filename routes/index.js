@@ -39,7 +39,7 @@ router.post('/signup', userController.userSignUpPost);
 router.post('/login', userController.userLoginPost);
 
 // users get all users
-router.get('/users', userController.userAllProfilesGet);
+router.get('/users', userController.userProfilesGet);
 
 // users/id (for other) get info/ nested/posts/comments
 // users/id (for logged in) login(don't get posts) vs load self page(get posts)

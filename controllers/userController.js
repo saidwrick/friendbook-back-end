@@ -93,21 +93,60 @@ exports.userProfileGet = function (req, res, next) {
     }
 }
 
-exports.userAllProfilesGet = function (req, res, next) {
-    User.find({_id : {$ne: req.userId}}, "firstName lastName profilePictureURL")
-    .collation( { locale: "en",  strength: 1 })
-    .sort({"firstName" : 1})
-    .exec (function (err, profiles) {
-        if (err) {
-            return next(err);
-        }
-        if (!profiles){
-            res.status(504).json("Users not found")
-        }
-        else {
-            res.status(200).json(profiles)
-        }
-    });
+exports.userProfilesGet = function (req, res, next) {
+    if (req.headers.type == "all") {
+        User.find({_id : {$ne: req.userId}}, "firstName lastName profilePictureURL")
+        .collation( {locale: "en", strength: 1})
+        .sort({"firstName" : 1})
+        .exec (function (err, profiles) {
+            if (err) {
+                return next(err);
+            }
+            if (!profiles){
+                res.status(504).json("Users not found")
+            }
+            else {
+                res.status(200).json(profiles)
+            }
+        });
+    }
+    else if (req.headers.type == "friends") {
+        User.findById(req.userId, "friends")
+        .populate({path: "friends", select: "firstName lastName profilePictureURL"})
+        .collation({locale: "en", strength: 1})
+        .sort({"firstName" : 1})
+        .exec (function (err, profiles) {
+            if (err) {
+                return next(err);
+            }
+            if (!profiles){
+                res.status(504).json("Users not found")
+            }
+            else {
+                res.status(200).json(profiles)
+            }
+        });
+    }
+    else if (req.headers.type == "friend-requests") {
+        User.findById(req.userId, "recievedRequestFriends")
+        .populate({path: "recievedRequestFriends", select: "firstName lastName profilePictureURL"})
+        .collation({locale: "en", strength: 1})
+        .sort({"firstName" : 1})
+        .exec (function (err, profiles) {
+            if (err) {
+                return next(err);
+            }
+            if (!profiles){
+                res.status(504).json("Users not found")
+            }
+            else {
+                res.status(200).json(profiles)
+            }
+        });
+    }
+    else {
+        res.status(400).json("no action type provided")
+    }
 }
 
 exports.userFriendActionsPut = function (req, res, next) {
@@ -169,6 +208,7 @@ exports.userFriendActionsPut = function (req, res, next) {
         });
     }
     else if (req.body.type == "request"){
+        console.log("here");
         User.findOneAndUpdate({_id : req.params.id}, 
         {$addToSet: {"recievedRequestFriends" : req.userId}}, 
         function (err, result) {
