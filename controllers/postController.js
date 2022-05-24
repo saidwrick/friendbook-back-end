@@ -19,7 +19,7 @@ exports.userPostsGet = async function (req, res, next) {
                 allIds.push(req.userId);
                 Post.find({"user" : {$in : allIds}})
                 .sort({postDate : -1})
-                .populate("user", "firstName lastName profilePictureURL")
+                .populate("user", "firstName lastName profilePicUrl")
                 .exec(function (err, posts){
                     if (err){
                         return next(err);
@@ -37,7 +37,7 @@ exports.userPostsGet = async function (req, res, next) {
     else if (req.headers.type == "general"){
         Post.find({"user" : req.params.id})
         .sort({postDate : -1})
-        .populate("user", "firstName lastName profilePictureURL")
+        .populate("user", "firstName lastName profilePicUrl")
         .exec(function (err, posts){
             if (err){
                 console.log("error")

@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // pass every req except for /login and /signup through Passport token authenticator
 app.use(function (req, res, next) {
-    if (req.url == "/login" || req.url == "/signup"){
+    if (req.url == "/login" || req.url == "/signup" || req.url == "/uploadImg"){
         return next();
     }
     else {

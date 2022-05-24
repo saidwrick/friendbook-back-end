@@ -38,6 +38,8 @@ get other user posts for profile info
 router.post('/signup', userController.userSignUpPost);
 router.post('/login', userController.userLoginPost);
 
+// router.post('/uploadImg', userController.userUploadImgPost);
+
 // users get all users
 router.get('/users', userController.userProfilesGet);
 

@@ -31,7 +31,8 @@ exports.userSignUpPost = function (req, res, next){
         password: req.body.password,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        birthday: req.body.birthday
+        birthday: req.body.birthday,
+        profilePicUrl: req.body.profilePicUrl
     })
     user.save(err => {
         if (err) {
@@ -63,8 +64,8 @@ exports.userLoginPost = function (req, res, next){
 
 exports.userProfileGet = function (req, res, next) {
     if (req.headers.type == "general") {
-        User.findById(req.params.id, 'firstName lastName profilePictureURL currentLocation friends birthday joinDate')
-        .populate({path: "friends", select: ["firstName", "lastName", "profilePictureURL"]})
+        User.findById(req.params.id, 'firstName lastName profilePicUrl currentLocation friends birthday joinDate')
+        .populate({path: "friends", select: ["firstName", "lastName", "profilePicUrl"]})
         .exec(function (err, profile) {
             if (err) {
                 return next(err); 
@@ -78,7 +79,7 @@ exports.userProfileGet = function (req, res, next) {
         });
     }
     else if (req.headers.type == "self") {
-        User.findById(req.userId, 'firstName lastName profilePictureURL currentLocation friends birthday joinDate sentRequestFriends recievedRequestFriends')
+        User.findById(req.userId, 'firstName lastName profilePicUrl currentLocation friends birthday joinDate sentRequestFriends recievedRequestFriends')
         .exec(function (err, profile) {
             if (err) {
                 return next(err); 
@@ -95,7 +96,7 @@ exports.userProfileGet = function (req, res, next) {
 
 exports.userProfilesGet = function (req, res, next) {
     if (req.headers.type == "all") {
-        User.find({_id : {$ne: req.userId}}, "firstName lastName profilePictureURL")
+        User.find({_id : {$ne: req.userId}}, "firstName lastName profilePicUrl")
         .collation( {locale: "en", strength: 1})
         .sort({"firstName" : 1})
         .exec (function (err, profiles) {
@@ -112,9 +113,9 @@ exports.userProfilesGet = function (req, res, next) {
     }
     else if (req.headers.type == "friends") {
         User.findById(req.userId, "friends")
-        .populate({path: "friends", select: "firstName lastName profilePictureURL"})
         .collation({locale: "en", strength: 1})
-        .sort({"firstName" : 1})
+        .populate({path: "friends", select: "firstName lastName profilePicUrl", 
+            options: {collation: {locale: "en", strength : 1}, sort : { "firstName" : 1}}})
         .exec (function (err, profiles) {
             if (err) {
                 return next(err);
@@ -129,9 +130,8 @@ exports.userProfilesGet = function (req, res, next) {
     }
     else if (req.headers.type == "friend-requests") {
         User.findById(req.userId, "recievedRequestFriends")
-        .populate({path: "recievedRequestFriends", select: "firstName lastName profilePictureURL"})
-        .collation({locale: "en", strength: 1})
-        .sort({"firstName" : 1})
+        .populate({path: "recievedRequestFriends", select: "firstName lastName profilePicUrl", 
+            options: {collation: {locale: "en", strength : 1}, sort : { "firstName" : 1}}})
         .exec (function (err, profiles) {
             if (err) {
                 return next(err);

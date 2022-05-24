@@ -32,9 +32,9 @@ const UserSchema = new Schema(
         type: Date, 
         default: Date.now
     },
-    profilePictureURL: {
+    profilePicUrl: {
         type: String,
-        default: "default/url"
+        default: "friendbook/profiles/kfgsezi8aione4yvwgb3"
     },
     currentLocation: {
         type: String

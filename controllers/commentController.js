@@ -16,7 +16,7 @@ const Comment = require("../models/comment")
 
 exports.commentsGet = function (req, res, next){
     Post.findById(req.params.id, "comments")
-    .populate({path: "comments", populate: {path: "user", select: "firstName lastName profilePictureURL"}})
+    .populate({path: "comments", populate: {path: "user", select: "firstName lastName profilePicUrl"}})
     .exec(function (err, comments){
         if (err) {
             return next(err);
