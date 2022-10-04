@@ -52,6 +52,18 @@ exports.commentPost = function (req, res, next) {
     })
 }
 
+exports.commentDelete = function (req, res, next) {
+    Comment.findByIdAndDelete(req.params.id)
+    .exec (function (err, likes) {
+        if (err){
+            return next (err);
+        }
+        else {
+            return res.status(200).json("successfully deleted comment");
+        }
+    })
+}
+
 exports.commentLikePut = function (req, res, next) {
     Comment.findById(req.params.id, async function(err, comment){
         if (err){
@@ -85,5 +97,16 @@ exports.commentLikePut = function (req, res, next) {
     })
 }
 
-
+exports.commentLikesGet = function (req, res, next) {
+    Comment.findById(req.params.id, "likes")
+    .populate({path: "likes", select: "firstName lastName profilePicUrl"})
+    .exec (function (err, likes) {
+        if (err){
+            return next (err);
+        }
+        else {
+            return res.status(200).json(likes);
+        }
+    })
+}
 

@@ -68,6 +68,18 @@ exports.newPostPost = function (req, res, next) {
     });
 }
 
+exports.postDelete = function (req, res, next) {
+    Post.findByIdAndDelete(req.params.id)
+    .exec (function (err, likes) {
+        if (err){
+            return next (err);
+        }
+        else {
+            return res.status(200).json("successfully deleted post");
+        }
+    })
+}
+
 exports.postLikePut = function (req, res, next) {
     Post.findById(req.params.id, async function(err, post){
         if (err){
@@ -100,6 +112,19 @@ exports.postLikePut = function (req, res, next) {
                     }
                 });
             }
+        }
+    })
+}
+
+exports.postLikesGet = function (req, res, next) {
+    Post.findById(req.params.id, "likes")
+    .populate({path: "likes", select: "firstName lastName profilePicUrl"})
+    .exec (function (err, likes) {
+        if (err){
+            return next (err);
+        }
+        else {
+            return res.status(200).json(likes);
         }
     })
 }

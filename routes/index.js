@@ -65,7 +65,7 @@ router.post('/users/:id/posts', postController.newPostPost);
 // posts/id get specific post (for notification)
 // posts/id delete post
 router.get('/posts/:id')
-router.delete('/posts/:id')
+router.delete('/posts/:id', postController.postDelete)
 
 // posts/id add/remove like *likes
 router.put('/posts/:id', postController.postLikePut)
@@ -76,11 +76,13 @@ router.get('/posts/:id/comments', commentController.commentsGet)
 // add comment to post
 router.post('/posts/:id/comments', commentController.commentPost)
 
+router.get('/posts/:id/likes', postController.postLikesGet)
+
 // comments/id add/remove like
 router.put('/comments/:id', commentController.commentLikePut)
-
+router.get('/comments/:id/likes', commentController.commentLikesGet)
+router.delete('/comments/:id', commentController.commentDelete)
 // comments/id delete 
-router.delete('/comments/:id')
 
 
 

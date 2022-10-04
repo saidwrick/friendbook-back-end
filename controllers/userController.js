@@ -113,7 +113,6 @@ exports.userProfilesGet = function (req, res, next) {
     }
     else if (req.headers.type == "friends") {
         User.findById(req.userId, "friends")
-        .collation({locale: "en", strength: 1})
         .populate({path: "friends", select: "firstName lastName profilePicUrl", 
             options: {collation: {locale: "en", strength : 1}, sort : { "firstName" : 1}}})
         .exec (function (err, profiles) {
