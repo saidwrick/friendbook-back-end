@@ -95,8 +95,25 @@ exports.userProfileGet = function (req, res, next) {
 }
 
 exports.userProfilesGet = function (req, res, next) {
+    console.log(req.query.search)
+    let search = null;
+
+    if (req.query.search){
+        search = [{"firstName" : {"$regex" : req.query.search, "$options" : "i" }}, 
+            {"lastName" : {"$regex" : req.query.search, "$options" : "i" }}]
+    }
+
     if (req.headers.type == "all") {
-        User.find({_id : {$ne: req.userId}}, "firstName lastName profilePicUrl")
+
+        let query = {
+            _id : {$ne: req.userId}
+        };
+
+        if (search){
+            query["$or"] = search
+        }
+
+        User.find(query, "firstName lastName profilePicUrl",)
         .collation( {locale: "en", strength: 1})
         .sort({"firstName" : 1})
         .exec (function (err, profiles) {
@@ -111,10 +128,51 @@ exports.userProfilesGet = function (req, res, next) {
             }
         });
     }
+
+   /*  {
+        path: "friends", 
+        select: "firstName lastName profilePicUrl", 
+        options: {
+            collation: {
+                locale : "en", 
+                strength : 1
+                }, 
+            sort : { 
+                "firstName" : 1
+            }
+        },
+        match: {
+            $or: [
+                    {"firstName" : {"$regex" : "s", "$options" : "i" }}, 
+                    {"lastName" : {"$regex" : "y", "$options" : "i" }}
+                ]
+        }
+    }
+    */
+
     else if (req.headers.type == "friends") {
+        let populate = {
+            path: "friends", 
+            select: "firstName lastName profilePicUrl", 
+            options: {
+                collation: {
+                    locale : "en", 
+                    strength : 1
+                }, 
+                sort : { 
+                    "firstName" : 1
+                }
+            }
+        }
+
+        if (search){
+            populate["match"] = {
+                $or: search
+            }
+        }
+
         User.findById(req.userId, "friends")
-        .populate({path: "friends", select: "firstName lastName profilePicUrl", 
-            options: {collation: {locale: "en", strength : 1}, sort : { "firstName" : 1}}})
+        .populate(populate)
         .exec (function (err, profiles) {
             if (err) {
                 return next(err);
@@ -128,9 +186,28 @@ exports.userProfilesGet = function (req, res, next) {
         });
     }
     else if (req.headers.type == "friend-requests") {
+
+        let populate = {
+            path: "recievedRequestFriends", 
+            select: "firstName lastName profilePicUrl", 
+            options: {
+                collation: {
+                    locale : "en", 
+                    strength : 1
+                }, 
+                sort : { 
+                    "firstName" : 1
+                }
+            }
+        }
+
+        if (search){
+            populate["match"] = {
+                $or: search
+            }
+        }
         User.findById(req.userId, "recievedRequestFriends")
-        .populate({path: "recievedRequestFriends", select: "firstName lastName profilePicUrl", 
-            options: {collation: {locale: "en", strength : 1}, sort : { "firstName" : 1}}})
+        .populate(populate)
         .exec (function (err, profiles) {
             if (err) {
                 return next(err);
@@ -147,6 +224,36 @@ exports.userProfilesGet = function (req, res, next) {
         res.status(400).json("no action type provided")
     }
 }
+
+exports.userProfilePut = function (req, res, next){
+
+    if (req.userId != req.params.id){
+        return res.status(401).json("Unauthorized access")
+    }
+
+    let query = {
+        "firstName" : req.body.firstName,
+        "lastName" : req.body.lastName,
+        "birthday" : req.body.birthday
+    }
+
+    if (req.body.profilePicUrl){
+        query["profilePicUrl"] = req.body.profilePicUrl
+    }
+
+    User.findByIdAndUpdate(req.userId, query, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+        if (!result){
+            res.status(504).json("Could not update profile")
+        }
+        else {
+            return res.status(200).json("successfully updated profile");
+        }
+    });
+}
+        
 
 exports.userFriendActionsPut = function (req, res, next) {
     if (req.body.type == "accept"){

@@ -47,7 +47,7 @@ router.get('/users', userController.userProfilesGet);
 // users/id (for logged in) login(don't get posts) vs load self page(get posts)
 // users/id update(for logged in)
 router.get('/users/:id', userController.userProfileGet);
-router.put('/users/:id')
+router.put('/users/:id', userController.userProfilePut);
 
 // users/id/friends friend actions put in req.body *accepts/ requested
 router.put('/users/:id/friend-actions', userController.userFriendActionsPut);
