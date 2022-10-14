@@ -21,9 +21,17 @@ exports.userSignUpPost = [
         const errors = validationResult(req);
         
         if (!errors.isEmpty()){
-            const errorString = errors.array().reduce((prev, cur) => {
-                return (prev.msg || prev) + '\r\n' + cur.msg
-            })
+            const errorArray = errors.array();
+            let errorString = ""
+
+            if (errorArray.length == 1){
+                errorString = errorArray[0].msg
+            }
+            else {
+                errorString = errors.array().reduce((prev, cur) => {
+                    return (prev.msg || prev) + '\r\n' + cur.msg
+                })
+            }
             return res.status(400).json(errorString)
         }
 
@@ -221,9 +229,17 @@ exports.userProfilePut = [
         const errors = validationResult(req);
         
         if (!errors.isEmpty()){
-            const errorString = errors.array().reduce((prev, cur) => {
-                return (prev.msg || prev) + '\r\n' + cur.msg
-            })
+            const errorArray = errors.array();
+            let errorString = ""
+
+            if (errorArray.length == 1){
+                errorString = errorArray[0].msg
+            }
+            else {
+                errorString = errors.array().reduce((prev, cur) => {
+                    return (prev.msg || prev) + '\r\n' + cur.msg
+                })
+            }
             return res.status(400).json(errorString)
         }
 
