@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Post = require("../models/post");
-// const { body,validationResult } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 // const bcrypt = require("bcryptjs");
 
 exports.userPostsGet = async function (req, res, next) {
@@ -54,19 +54,35 @@ exports.userPostsGet = async function (req, res, next) {
     }
 }
 
-exports.newPostPost = function (req, res, next) {
-    const post = new Post ({
-        user: req.userId,
-        content: req.body.content
-    }).save(err => {
-        if (err) {
-            return next(err);
+exports.newPostPost = [
+    body('content', 'content required').trim().isLength({ min: 1 }).escape(),
+    (req, res, next) => {
+    
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()){
+            const errorString = errors.array().reduce((prev, cur) => {
+                return (prev.msg || prev) + '\r\n' + cur.msg
+            })
+            return res.status(400).json(errorString)
         }
-        else{
-        res.status(200).json("successfully made a new post");
+
+        else {
+
+            const post = new Post ({
+                user: req.userId,
+                content: req.body.content
+            }).save(err => {
+                if (err) {
+                    return next(err);
+                }
+                else{
+                res.status(200).json("successfully made a new post");
+                }
+            });
         }
-    });
-}
+    }
+]
 
 exports.postDelete = function (req, res, next) {
     Post.findByIdAndDelete(req.params.id)

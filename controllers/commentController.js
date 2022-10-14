@@ -1,18 +1,7 @@
 const User = require("../models/user");
 const Post = require("../models/post")
 const Comment = require("../models/comment")
-
-// //get comment info
-// exports.commentGet = 
-
-// //create new comment
-// exports.commentPost = 
-
-// //update comment likes
-// exports.commentPut = 
-
-// //delete comment
-// exports.commentDelete = 
+const { body, validationResult } = require("express-validator");
 
 exports.commentsGet = function (req, res, next){
     Post.findById(req.params.id, "comments")
@@ -28,29 +17,44 @@ exports.commentsGet = function (req, res, next){
 }
 
 
-exports.commentPost = function (req, res, next) {
-    const comment = new Comment ({
-        post: req.params.id,
-        user: req.userId,
-        content: req.body.content
-    }).save((err, comment) =>{
-        if (err){
-            return next(err);
+exports.commentPost = [
+    body('content', 'content required').trim().isLength({ min: 1 }).escape(),
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()){
+            const errorString = errors.array().reduce((prev, cur) => {
+                return (prev.msg || prev) + '\r\n' + cur.msg
+            })
+            return res.status(400).json(errorString)
         }
+
         else {
-            Post.findByIdAndUpdate(req.params.id, 
-            {$addToSet: {"comments" : comment._id }}, 
-            function (err){
+            const comment = new Comment ({
+                post: req.params.id,
+                user: req.userId,
+                content: req.body.content
+            }).save((err, comment) =>{
                 if (err){
                     return next(err);
                 }
                 else {
-                    return res.status(200).json("new comment posted")
+                    Post.findByIdAndUpdate(req.params.id, 
+                    {$addToSet: {"comments" : comment._id }}, 
+                    function (err){
+                        if (err){
+                            return next(err);
+                        }
+                        else {
+                            return res.status(200).json("new comment posted")
+                        }
+                    })
                 }
             })
         }
-    })
-}
+    }
+]
 
 exports.commentDelete = function (req, res, next) {
     Comment.findByIdAndDelete(req.params.id)
