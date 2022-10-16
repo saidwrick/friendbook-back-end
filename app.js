@@ -3,13 +3,15 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+require('dotenv').config()
+
 
 const jwt = require('jsonwebtoken');
 
 const passport = require("./passport/config");
 
 const mongoose = require("mongoose");
-const mongoDb = "mongodb+srv://user:password001@friendbook.pxhzi.mongodb.net/friendbook?retryWrites=true&w=majority";
+const mongoDb = process.env.MONGO_DB;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));

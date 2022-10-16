@@ -3,42 +3,11 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const postController = require('../controllers/postController');
 const commentController = require ('../controllers/commentController');
-/* 
-get logged in user info (details/ friends)
-get posts of friends + user for logged in user
-user update profile
-
-user create post
-user delete post
-user create comment
-user delete comment
-user like/unlike posts
-user like/unlike comments
-
-user add friend
-user delete friend
-user un-send friend request
-reject friend request
-
-user get notifications
-user update read notifications
-
-sign up
-login
-
-get all users
-get other user profile info
-get other user posts for profile info
-*/
-
-// * needs notification
 
 // /signup sign up
 // /login login
 router.post('/signup', userController.userSignUpPost);
 router.post('/login', userController.userLoginPost);
-
-// router.post('/uploadImg', userController.userUploadImgPost);
 
 // users get all users
 router.get('/users', userController.userProfilesGet);
