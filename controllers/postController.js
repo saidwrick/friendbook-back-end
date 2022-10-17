@@ -55,7 +55,7 @@ exports.userPostsGet = async function (req, res, next) {
 }
 
 exports.newPostPost = [
-    body('content', 'content required').trim().isLength({ min: 1 }).escape(),
+    body('content', 'content required').trim().isLength({ min: 1 }),
     (req, res, next) => {
     
         const errors = validationResult(req);

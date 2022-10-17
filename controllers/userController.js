@@ -10,11 +10,11 @@ exports.userCreateGet = function (req, res, next){
 };
 
 exports.userSignUpPost = [
-    body('email', 'email required').trim().isLength({ min: 5 }).escape().isEmail().withMessage("email not valid"),
-    body('password', 'password required').trim().isLength({ min: 1 }).escape(),
-    body('firstName', 'first name required').trim().isLength({ min: 1 }).escape(),
-    body('lastName', 'last name required').trim().isLength({ min: 1 }).escape(),
-    body('birthday', 'birthday required').trim().isLength({ min: 1 }).escape(),
+    body('email', 'email required').trim().isLength({ min: 5 }).isEmail().withMessage("email not valid"),
+    body('password', 'password required').trim().isLength({ min: 1 }),
+    body('firstName', 'first name required').trim().isLength({ min: 1 }),
+    body('lastName', 'last name required').trim().isLength({ min: 1 }),
+    body('birthday', 'birthday required').trim().isLength({ min: 1 }),
 
     (req, res, next) => {
     
@@ -220,9 +220,9 @@ exports.userProfilesGet = function (req, res, next) {
 }
 
 exports.userProfilePut = [
-    body('firstName', 'first name required').trim().isLength({ min: 1 }).withMessage("first name can't be empty").escape(),
-    body('lastName', 'last name required').trim().isLength({ min: 1 }).withMessage("last name can't be empty").escape(),
-    body('birthday', 'birthday required').trim().isLength({ min: 1 }).withMessage("birthday can't be empty").escape(),
+    body('firstName', 'first name required').trim().isLength({ min: 1 }).withMessage("first name can't be empty"),
+    body('lastName', 'last name required').trim().isLength({ min: 1 }).withMessage("last name can't be empty"),
+    body('birthday', 'birthday required').trim().isLength({ min: 1 }).withMessage("birthday can't be empty"),
 
     (req, res, next) => {
     

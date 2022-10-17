@@ -18,7 +18,7 @@ exports.commentsGet = function (req, res, next){
 
 
 exports.commentPost = [
-    body('content', 'content required').trim().isLength({ min: 1 }).escape(),
+    body('content', 'content required').trim().isLength({ min: 1 }),
     (req, res, next) => {
 
         const errors = validationResult(req);
