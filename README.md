@@ -15,6 +15,7 @@ Fullstack social media (Facebook) app that supports features such as creating ac
 - Express
 - Vanilla CSS
 - MongoDB
+- Cloudniary (for pictures)
 - Front-End Hosted on Netlify
 - Back-End Hosted on Render
 
@@ -38,7 +39,6 @@ Fullstack social media (Facebook) app that supports features such as creating ac
   - Search all users
   - Filter by Friends or incoming Friend Requests
   - Friend "actions" (Add Friend, Accept Friend Request, Cancel Friend Request, Remove Friend)
-  - Pagination of search results
 
 - Posts and Comments
   - View posts from your friends 
@@ -52,8 +52,20 @@ Fullstack social media (Facebook) app that supports features such as creating ac
   - Responsive web and mobile design
   - Graceful error handling (error messages within components when applicable, or entire 404/500 error pages)
   - Functional nav-bar, including drop-down settings menu
+  - Pagination of results
   
+### Back-End
 
+- REST API
+  - GET/ PUT/ POST/ DELETE actions for resources (accounts, posts, comments)
+  - Proper Error Code Responses and Messages
 
-
-
+- Database
+  - Read & Write to MongoDB database using Mongoose ODM
+  - Data model schemas for different resources
+  - Virtual properties for computed results
+ 
+- Security
+  - Validates form content (sign-up info, posts, comments, etc.) before writing to database
+  - Generate JWT tokens on Login validation (PassportJS)
+  - Authorization required to access Routes
