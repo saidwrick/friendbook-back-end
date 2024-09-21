@@ -68,25 +68,4 @@ app.use(function(err, req, res, next) {
 
 });
 
-const apiURL = process.env.RENDER_API_URL
-
-async function pingRenderServer() {
-    try {
-        let res = await fetch(apiURL)
-        
-        console.log(res.status)
-    }
-
-    catch(err) {
-        console.log(err)
-    }
-}
-
-function pingTimer() {
-    setTimeout(pingTimer, 600000)
-    pingRenderServer()
-}
-
-pingTimer()
-
 module.exports = app;
